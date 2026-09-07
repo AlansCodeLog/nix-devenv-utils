@@ -23,11 +23,6 @@ in
       default = "wezterm";
       description = ''Terminal to use.'';
     };
-    rootDir = lib.mkOption {
-      type = lib.types.str;
-      default = config.env.DEVENV_ROOT + "/";
-      description = ''Root directory of the project.'';
-    };
 
     moduleInstructions = lib.mkOption {
       type = lib.types.lines;
@@ -72,7 +67,6 @@ in
   config = lib.mkIf cfg.enabled {
     env.TERM = cfg.terminal;
     env.DIST_DIR = cfg.distDir;
-    env.ROOT_DIR = cfg.rootDir;
 
     process.managers.process-compose.settings.theme = "One Dark";
     # not working?
@@ -158,7 +152,6 @@ in
              DEFINES:
                 - $TERM (custom.base.terminal)
                 - $DIST_DIR (custom.base.distDir)
-                - $ROOT_DIR (DEVENV_ROOT + /)
                 - $LOCALHOST_PEM * (if custom.base.loadSelfSignedCerts)
                 - $LOCALHOST_KEY_PEM * (if custom.base.loadSelfSignedCerts)
                 - $GH_TOKEN * (if custom.base.loadGithubToken)
@@ -176,7 +169,6 @@ in
     scripts.devInfo =
       let
         base = ''
-          echo "   " ROOT_DIR: ${cfg.rootDir}
           echo "   " DIST_DIR: ${cfg.distDir}
           echo "   " TERM: ${cfg.terminal}
         '';
@@ -252,7 +244,7 @@ in
     };
     packages = [
       pkgs.jq
-        pkgs.sops
+      pkgs.sops
     ];
   };
 }
